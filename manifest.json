@@ -5,7 +5,8 @@
   "manifest_version": 3,
   "permissions": [
     "webRequest",
-    "storage"
+    "webNavigation",
+    "scripting"
   ],
   "host_permissions": [
     "https://*.youtube.com/*",
@@ -22,16 +23,5 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://www.youtube.com/watch?v=*"
-      ],
-      "js": [
-        "content.js"
-      ],
-      "run_at": "document_end"
-    }
-  ]
+  }
 }
