@@ -1,6 +1,6 @@
 {
-  "name": "Getting Started Example",
-  "description": "Build an Extension!",
+  "name": "Adaptive Bit Rate Analyser",
+  "description": "Analyse Youtube's ABR traffic",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": [
@@ -13,7 +13,7 @@
     "https://*.googlevideo.com/*"
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "128": "icon.png"
     }
