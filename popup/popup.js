@@ -4,11 +4,14 @@ chrome.runtime.sendMessage({action: 'get_logs'}, function (response) {
 
     abr_logs = response.data
 
-    let logs = document.getElementById('logs')
+
 
     if (Object.keys(abr_logs).length === 0) {
-        logs.style.display = 'none'
+        document.getElementById('logs_selection').style.display = 'none'
     } else {
+        document.getElementById('empty_logs_hint').style.display = 'none'
+
+        let logs = document.getElementById('logs')
         for (const [key, log] of Object.entries(abr_logs)) {
             let option = document.createElement('option')
             option.text = log['title']
