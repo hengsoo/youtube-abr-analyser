@@ -4,8 +4,6 @@ chrome.runtime.sendMessage({action: 'get_logs'}, function (response) {
 
     abr_logs = response.data
 
-
-
     if (Object.keys(abr_logs).length === 0) {
         document.getElementById('logs_selection').style.display = 'none'
     } else {
