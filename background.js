@@ -4,7 +4,7 @@ let abr_logs = {}
 chrome.tabs.onCreated.addListener((tab) => {
         if (tab.url.includes("https://www.youtube.com/watch?v=")) {
             abr_logs[tab.id] = {}
-            abr_logs[tab.id]['header'] = 'datetime;itag;clen;buffer_health'
+            abr_logs[tab.id]['header'] = 'datetime,itag,clen,buffer_health'
             abr_logs[tab.id]['data'] = []
             abr_logs[tab.id]['title'] = tab.title
             console.log(`Added ABR log for \n ${tab.id} - ${tab.title}`)
@@ -24,7 +24,6 @@ chrome.runtime.onMessage.addListener(
 
     }
 );
-
 
 chrome.webRequest.onBeforeRequest.addListener(
     function (details) {
@@ -46,7 +45,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                             console.warn(`Can't get video's buffer health. Reload ${tab.title} maybe?`)
                         }
                     } else {
-                        let log_data = `${Date.now()};${itag};${clen};${response.buffer_health}`
+                        let log_data = `${Date.now()},${itag},${clen},${response.buffer_health}`
                         abr_logs[tab.id]['data'].push(log_data)
                     }
                 })
