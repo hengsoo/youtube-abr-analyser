@@ -8,7 +8,7 @@ function main() {
     let [video_player] = document.getElementsByTagName('video')
 
     if (video_player === undefined) {
-        console.log('No video player found')
+        console.log('ABR Traffic Analyser - No video player found')
         return true
     }
 

@@ -13,7 +13,7 @@ chrome.tabs.onUpdated.addListener((tab_id, change_info, tab) => {
             ).then()
             // If log exists
             if (tab_id.toString() in abr_logs) {
-                // If url has changed, clear and update log
+                // If url has changed (clicked on other video link) , update log info
                 if (tabUrlChanged(tab) === true) {
                     updateTabAbrLogInfo(tab)
                 }
