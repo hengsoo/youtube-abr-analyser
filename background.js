@@ -80,6 +80,8 @@ chrome.webRequest.onBeforeRequest.addListener(
         const clen = url_params.get('clen')
         const itag = url_params.get('itag')
         let buffer_health = 0
+        let view_width = 0
+        let view_height = 0
 
         chrome.tabs.get(details.tabId, (tab) => {
             console.log(`Measuring ABR on \n ${tab.title}`)
@@ -88,21 +90,23 @@ chrome.webRequest.onBeforeRequest.addListener(
                 createLog(tab)
             }
 
-            chrome.tabs.sendMessage(tab.id, {action: "get_buffer_health"},
+            chrome.tabs.sendMessage(tab.id, {action: "get_video_info"},
                 function (response) {
 
                     // Set buffer health value
                     if (response === undefined) {
                         if (chrome.runtime.lastError) {
                             // console.warn(chrome.runtime.lastError.message)
-                            console.warn(`Can't get video's buffer health.`)
+                            console.warn(`Can't get video's info.`)
                         }
                     } else {
                         buffer_health = response.buffer_health
+                        view_width = response.view_width
+                        view_height = response.view_height
                     }
 
                     // Append log data
-                    let log_data = `${Date.now()},${itag},${clen},${buffer_health}`
+                    let log_data = `${Date.now()},${itag},${clen},${buffer_health},${view_width},${view_height}`
                     abr_logs[tab.id]['data'].push(log_data)
                     console.log(log_data)
                 })
@@ -123,7 +127,7 @@ function updateTabAbrLogInfo(tab) {
 
 function createLog(tab) {
     abr_logs[tab.id] = {}
-    abr_logs[tab.id]['header'] = 'datetime,itag,clen,buffer_health'
+    abr_logs[tab.id]['header'] = 'datetime,itag,clen,buffer_health,view_width,view_height'
     abr_logs[tab.id]['data'] = []
     abr_logs[tab.id]['title'] = tab.title
     abr_logs[tab.id]['url'] = tab.url
