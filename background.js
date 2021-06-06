@@ -1,5 +1,10 @@
 let abr_logs = {}
 
+chrome.runtime.onSuspend.addListener(() => {
+    chrome.storage.local.set({"logs": abr_logs}, function () {
+        console.log('Logs saved', abr_logs);
+    });
+})
 
 chrome.tabs.onUpdated.addListener((tab_id, change_info, tab) => {
 
@@ -24,12 +29,7 @@ chrome.tabs.onUpdated.addListener((tab_id, change_info, tab) => {
             }
             // Create new log if log doesn't exist
             else {
-                abr_logs[tab.id] = {}
-                abr_logs[tab.id]['header'] = 'datetime,itag,clen,buffer_health'
-                abr_logs[tab.id]['data'] = []
-                abr_logs[tab.id]['title'] = tab.title
-                abr_logs[tab.id]['url'] = tab.url
-                console.log(`Added ABR log for \n ${tab.id} - ${tab.title}`)
+                createLog(tab)
             }
         }
     }
@@ -38,11 +38,34 @@ chrome.tabs.onUpdated.addListener((tab_id, change_info, tab) => {
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        // Save logs
+
         if (request.action === 'get_logs') {
-            console.log('sending logs')
-            console.log(abr_logs)
-            sendResponse({data: abr_logs});
+            // Save logs if there are any
+            if (Object.keys(abr_logs).length !== 0) {
+                chrome.storage.local.set({"logs": abr_logs}, function () {
+                    console.log('Logs saved', abr_logs);
+                })
+                console.log('Sending logs')
+                console.log(abr_logs)
+                sendResponse({data: abr_logs})
+            }
+            // Else get log from storage
+            else {
+                chrome.storage.local.get('logs', function (result) {
+                    if (result['logs'] !== undefined) {
+                        abr_logs = result['logs']
+                    }
+                })
+                console.log('Sending logs from storage')
+                console.log(abr_logs)
+                sendResponse({data: abr_logs})
+
+            }
+        } else if (request.action === 'clear_logs') {
+            chrome.storage.local.remove('logs', () => {
+                console.log('Storage logs cleared.')
+            })
+            abr_logs = {}
         }
     }
 );
@@ -60,6 +83,10 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         chrome.tabs.get(details.tabId, (tab) => {
             console.log(`Measuring ABR on \n ${tab.title}`)
+
+            if ( ! (tab.id.toString() in abr_logs) ){
+                createLog(tab)
+            }
 
             chrome.tabs.sendMessage(tab.id, {action: "get_buffer_health"},
                 function (response) {
@@ -94,4 +121,12 @@ function updateTabAbrLogInfo(tab) {
     abr_logs[tab.id]['title'] = tab.title
 }
 
+function createLog(tab) {
+    abr_logs[tab.id] = {}
+    abr_logs[tab.id]['header'] = 'datetime,itag,clen,buffer_health'
+    abr_logs[tab.id]['data'] = []
+    abr_logs[tab.id]['title'] = tab.title
+    abr_logs[tab.id]['url'] = tab.url
+    console.log(`Added ABR log for \n ${tab.id} - ${tab.title}`)
+}
 

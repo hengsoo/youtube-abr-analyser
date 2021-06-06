@@ -6,7 +6,8 @@
   "permissions": [
     "webRequest",
     "webNavigation",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
     "https://*.youtube.com/*",

@@ -37,3 +37,16 @@ function download_csv() {
     hiddenElement.download = `ABR-LOG-${abr_logs[log_key]['title']}.csv`;
     hiddenElement.click();
 }
+
+document.getElementById('clear_logs').addEventListener("click", clear_logs)
+
+function clear_logs(){
+    abr_logs = {}
+    document.getElementById('logs_selection').style.display = 'none'
+    document.getElementById('empty_logs_hint').style.display = 'initial'
+    let logs = document.getElementById('logs')
+    while (logs.options.length > 0) {
+        logs.remove(0);
+    }
+    chrome.runtime.sendMessage({action: 'clear_logs'})
+}
