@@ -70,14 +70,14 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-chrome.webRequest.onBeforeRequest.addListener(
+chrome.webRequest.onResponseStarted.addListener(
     function (details) {
 
         const url = details.url
 
         const url_params = new URLSearchParams(url.substring(url.indexOf('?')))
 
-        const clen = url_params.get('clen')
+        const clen = details.responseHeaders.find((elem) => elem.name == "Content-Length")
         const itag = url_params.get('itag')
         let buffer_health = 0
         let view_width = 0
@@ -86,7 +86,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         chrome.tabs.get(details.tabId, (tab) => {
             console.log(`Measuring ABR on \n ${tab.title}`)
 
-            if ( ! (tab.id.toString() in abr_logs) ){
+            if (!(tab.id.toString() in abr_logs)) {
                 createLog(tab)
             }
 
@@ -106,14 +106,14 @@ chrome.webRequest.onBeforeRequest.addListener(
                     }
 
                     // Append log data
-                    let log_data = `${Date.now()},${itag},${clen},${buffer_health},${view_width},${view_height}`
+                    let log_data = `${Date.now()},${itag},${clen.value},${buffer_health},${view_width},${view_height}`
                     abr_logs[tab.id]['data'].push(log_data)
                     console.log(log_data)
                 })
         })
 
     },
-    {urls: ["*://*.googlevideo.com/videoplayback?*"]}
+    {urls: ["*://*.googlevideo.com/videoplayback?*"]}, ['responseHeaders']
 );
 
 function tabUrlChanged(tab) {
