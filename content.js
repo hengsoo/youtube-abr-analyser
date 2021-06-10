@@ -21,6 +21,10 @@ function main() {
                     buffer_healths.push(video_player.buffered.end(i) - video_player.buffered.start(i))
                 }
 
+                if ( buffer_healths.length === 0){
+                    buffer_healths.push(0)
+                }
+                
                 sendResponse({
                     buffer_healths: buffer_healths,
                     view_width: video_player.style.width,
