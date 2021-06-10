@@ -84,7 +84,7 @@ chrome.webRequest.onResponseStarted.addListener(
         let view_height = 0
 
         chrome.tabs.get(details.tabId, (tab) => {
-            console.log(`Measuring ABR on \n ${tab.title}`)
+            console.log(`Measuring ABR on \n ${tab.id} - ${tab.title}`)
 
             if (!(tab.id.toString() in abr_logs)) {
                 createLog(tab)
