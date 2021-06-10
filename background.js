@@ -79,7 +79,7 @@ chrome.webRequest.onResponseStarted.addListener(
 
         const clen = details.responseHeaders.find((elem) => elem.name == "Content-Length")
         const itag = url_params.get('itag')
-        let buffer_health = 0
+        let buffer_healths = [0]
         let view_width = 0
         let view_height = 0
 
@@ -100,13 +100,19 @@ chrome.webRequest.onResponseStarted.addListener(
                             console.warn(`Can't get video's info.`)
                         }
                     } else {
-                        buffer_health = response.buffer_health
+                        buffer_healths = response.buffer_healths
                         view_width = response.view_width
                         view_height = response.view_height
                     }
 
                     // Append log data
-                    let log_data = `${Date.now()},${itag},${clen.value},${buffer_health},${view_width},${view_height}`
+                    let log_data = `${Date.now()},${itag},${clen.value},`
+                    // Add buffers
+                    for (let buffer_health of buffer_healths) {
+                        log_data += `${buffer_health},`
+                    }
+                    log_data += `${view_width},${view_height}`
+
                     abr_logs[tab.id]['data'].push(log_data)
                     console.log(log_data)
                 })
