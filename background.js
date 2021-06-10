@@ -122,14 +122,14 @@ function tabUrlChanged(tab) {
 
 function updateTabAbrLogInfo(tab) {
     abr_logs[tab.id]['url'] = tab.url
-    abr_logs[tab.id]['title'] = tab.title
+    abr_logs[tab.id]['title'] = `${tab.id} - ${tab.title}`
 }
 
 function createLog(tab) {
     abr_logs[tab.id] = {}
     abr_logs[tab.id]['header'] = 'datetime,itag,clen,buffer_health,view_width,view_height'
     abr_logs[tab.id]['data'] = []
-    abr_logs[tab.id]['title'] = tab.title
+    abr_logs[tab.id]['title'] = `${tab.id} - ${tab.title}`
     abr_logs[tab.id]['url'] = tab.url
     console.log(`Added ABR log for \n ${tab.id} - ${tab.title}`)
 }
